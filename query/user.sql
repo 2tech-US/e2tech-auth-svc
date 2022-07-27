@@ -3,9 +3,10 @@ INSERT INTO users (
   phone,
   password,
   name,
+  role,
   date_of_birth
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
 RETURNING *;
 

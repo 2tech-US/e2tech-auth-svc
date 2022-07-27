@@ -15,17 +15,19 @@ INSERT INTO users (
   phone,
   password,
   name,
+  role,
   date_of_birth
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 )
-RETURNING id, phone, password, name, date_of_birth, verified, created_at
+RETURNING id, phone, password, name, role, date_of_birth, verified, created_at
 `
 
 type CreateUserParams struct {
 	Phone       string    `json:"phone"`
 	Password    string    `json:"password"`
 	Name        string    `json:"name"`
+	Role        string    `json:"role"`
 	DateOfBirth time.Time `json:"date_of_birth"`
 }
 
@@ -34,6 +36,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Phone,
 		arg.Password,
 		arg.Name,
+		arg.Role,
 		arg.DateOfBirth,
 	)
 	var i User
@@ -42,6 +45,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,
@@ -60,7 +64,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, phone, password, name, date_of_birth, verified, created_at FROM users
+SELECT id, phone, password, name, role, date_of_birth, verified, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -72,6 +76,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,
@@ -80,7 +85,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserByPhone = `-- name: GetUserByPhone :one
-SELECT id, phone, password, name, date_of_birth, verified, created_at FROM users
+SELECT id, phone, password, name, role, date_of_birth, verified, created_at FROM users
 WHERE phone = $1 LIMIT 1
 `
 
@@ -92,6 +97,7 @@ func (q *Queries) GetUserByPhone(ctx context.Context, phone string) (User, error
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,
@@ -100,7 +106,7 @@ func (q *Queries) GetUserByPhone(ctx context.Context, phone string) (User, error
 }
 
 const getUserForUpdate = `-- name: GetUserForUpdate :one
-SELECT id, phone, password, name, date_of_birth, verified, created_at FROM users
+SELECT id, phone, password, name, role, date_of_birth, verified, created_at FROM users
 WHERE id = $1 LIMIT 1
 FOR NO KEY UPDATE
 `
@@ -113,6 +119,7 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id int64) (User, error) 
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,
@@ -121,7 +128,7 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id int64) (User, error) 
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, phone, password, name, date_of_birth, verified, created_at FROM users
+SELECT id, phone, password, name, role, date_of_birth, verified, created_at FROM users
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -146,6 +153,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.Phone,
 			&i.Password,
 			&i.Name,
+			&i.Role,
 			&i.DateOfBirth,
 			&i.Verified,
 			&i.CreatedAt,
@@ -168,7 +176,7 @@ const updatePassword = `-- name: UpdatePassword :one
 UPDATE users
 SET password = $2
 WHERE id = $1
-RETURNING id, phone, password, name, date_of_birth, verified, created_at
+RETURNING id, phone, password, name, role, date_of_birth, verified, created_at
 `
 
 type UpdatePasswordParams struct {
@@ -185,6 +193,7 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,
@@ -196,7 +205,7 @@ const verify = `-- name: Verify :one
 UPDATE users
 SET verified = true
 WHERE phone = $1
-RETURNING id, phone, password, name, date_of_birth, verified, created_at
+RETURNING id, phone, password, name, role, date_of_birth, verified, created_at
 `
 
 func (q *Queries) Verify(ctx context.Context, phone string) (User, error) {
@@ -207,6 +216,7 @@ func (q *Queries) Verify(ctx context.Context, phone string) (User, error) {
 		&i.Phone,
 		&i.Password,
 		&i.Name,
+		&i.Role,
 		&i.DateOfBirth,
 		&i.Verified,
 		&i.CreatedAt,

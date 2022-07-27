@@ -13,7 +13,11 @@ import (
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
 )
 
-const ADMIN = "admin"
+const (
+	ADMIN     = "admin"
+	PASSENGER = "passenger"
+	DRIVER    = "driver"
+)
 
 type Server struct {
 	DB           *db.Queries
@@ -64,6 +68,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		Phone:       req.Phone,
 		Password:    utils.HashPassword(req.Password),
 		Name:        req.Name,
+		Role:        req.Role,
 		DateOfBirth: reqDateOfBirth,
 	}
 

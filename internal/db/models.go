@@ -13,6 +13,7 @@ type User struct {
 	Phone       string    `json:"phone"`
 	Password    string    `json:"password"`
 	Name        string    `json:"name"`
+	Role        string    `json:"role"`
 	DateOfBirth time.Time `json:"date_of_birth"`
 	Verified    bool      `json:"verified"`
 	CreatedAt   time.Time `json:"created_at"`
