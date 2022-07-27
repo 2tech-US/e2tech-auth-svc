@@ -8,13 +8,15 @@ import (
 	"time"
 
 	"github.com/lntvan166/e2tech-auth-svc/internal/db"
+	"github.com/lntvan166/e2tech-auth-svc/internal/passenger"
 	"github.com/lntvan166/e2tech-auth-svc/internal/pb"
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
 )
 
 type Server struct {
-	DB  *db.Queries
-	Jwt utils.JwtWrapper
+	DB           *db.Queries
+	Jwt          utils.JwtWrapper
+	PassengerSvc *passenger.ServiceClient
 	pb.UnimplementedAuthServiceServer
 }
 
@@ -33,6 +35,20 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		return &pb.RegisterResponse{
 			Status: http.StatusBadRequest,
 			Error:  "user already exists",
+		}, nil
+	}
+
+	passengerSvcReq := &passenger.CreatePassengerRequest{
+		Phone:       req.Phone,
+		Password:    req.Password,
+		Name:        req.Name,
+		DateOfBirth: req.DateOfBirth,
+	}
+	_, err = s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
+	if err != nil {
+		return &pb.RegisterResponse{
+			Status: http.StatusBadGateway,
+			Error:  fmt.Sprintf("passenger service error: %s", err),
 		}, nil
 	}
 

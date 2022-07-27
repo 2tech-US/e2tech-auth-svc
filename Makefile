@@ -1,9 +1,9 @@
 postgres:
-	docker run --name postgres12 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:12-alpine
+	docker run --name e2tech -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:12-alpine
 createdb:
-	docker exec -it postgres12 createdb --username=root --owner=root auth_svc
+	docker exec -it e2tech createdb --username=root --owner=root auth_svc
 dropdb:
-	docker exec -it postgres12 dropdb --username=root auth_svc
+	docker exec -it e2tech dropdb --username=root auth_svc
 migrateup:
 	migrate -path migration -database "postgresql://root:secret@localhost:5432/auth_svc?sslmode=disable" -verbose up
 migratedown:

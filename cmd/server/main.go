@@ -7,6 +7,7 @@ import (
 
 	"github.com/lntvan166/e2tech-auth-svc/internal/config"
 	"github.com/lntvan166/e2tech-auth-svc/internal/db"
+	"github.com/lntvan166/e2tech-auth-svc/internal/passenger"
 	"github.com/lntvan166/e2tech-auth-svc/internal/pb"
 	"github.com/lntvan166/e2tech-auth-svc/internal/services"
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
@@ -36,9 +37,14 @@ func main() {
 
 	fmt.Println("Auth Svc on", c.Port)
 
+	passengerSvc := &passenger.ServiceClient{
+		PassengerClient: passenger.InitServiceClient(&c),
+	}
+
 	s := services.Server{
-		DB:  DB,
-		Jwt: jwt,
+		DB:           DB,
+		PassengerSvc: passengerSvc,
+		Jwt:          jwt,
 	}
 
 	grpcServer := grpc.NewServer()

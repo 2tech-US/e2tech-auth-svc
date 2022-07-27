@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package passenger;
+
+option go_package = "./internal/pb";
+
+service PassengerService {
+  rpc CreatePassenger(CreatePassengerRequest) returns (CreatePassengerResponse) {}
+}
+
+message Passenger {
+  int64 id = 1;
+  string phone = 2;
+  string name = 3;
+  bool verified = 4;
+  string dateOfBirth = 5;
+}
+
+message CreatePassengerRequest {
+  string phone = 1;
+  string password = 2;
+  string name = 3;
+  string dateOfBirth = 4;
+}
+
+message CreatePassengerResponse {
+  int64 status = 1;
+  string error = 2;
+  Passenger passenger = 3;
+}
+
