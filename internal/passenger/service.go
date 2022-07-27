@@ -22,3 +22,13 @@ func (s *ServiceClient) CreatePassenger(ctx context.Context, req *CreatePassenge
 	})
 
 }
+
+type VerifyPassengerRequest struct {
+	Phone string `json:"phone"`
+}
+
+func (s *ServiceClient) VerifyPassenger(ctx context.Context, req *pb.VerifyPassengerRequest) (*pb.VerifyPassengerResponse, error) {
+	return s.PassengerClient.VerifyPassenger(ctx, &pb.VerifyPassengerRequest{
+		Phone: req.Phone,
+	})
+}

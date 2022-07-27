@@ -6,6 +6,7 @@ option go_package = "./internal/pb";
 
 service PassengerService {
   rpc CreatePassenger(CreatePassengerRequest) returns (CreatePassengerResponse) {}
+  rpc VerifyPassenger(VerifyPassengerRequest) returns (VerifyPassengerResponse) {}
 }
 
 message Passenger {
@@ -27,5 +28,15 @@ message CreatePassengerResponse {
   int64 status = 1;
   string error = 2;
   Passenger passenger = 3;
+}
+
+message VerifyPassengerRequest {
+    string phone = 1;
+}
+  
+message VerifyPassengerResponse {
+    int64 status = 1;
+    string error = 2;
+    Passenger passenger = 3;
 }
 

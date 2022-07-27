@@ -8,6 +8,7 @@ service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse) {}
   rpc Login(LoginRequest) returns (LoginResponse) {}
   rpc Validate(ValidateRequest) returns (ValidateResponse) {}
+  rpc Verify(VerifyRequest) returns (VerifyResponse) {}
 }
 
 // Register
@@ -45,4 +46,17 @@ message ValidateResponse {
   int64 status = 1;
   string error = 2;
   int64 userId = 3;
+}
+
+// Verify
+
+message VerifyRequest {
+  string phone = 1;
+  string token = 2;
+  // string code = 2;
+}
+
+message VerifyResponse {
+  int64 status = 1;
+  string error = 2;
 }

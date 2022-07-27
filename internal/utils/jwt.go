@@ -17,12 +17,14 @@ type JwtWrapper struct {
 type jwtClaims struct {
 	jwt.StandardClaims
 	Id    int64
+	Name  string
 	Phone string
 }
 
 func (w *JwtWrapper) GenerateToken(user db.User) (signedToken string, err error) {
 	claims := &jwtClaims{
 		Id:    user.ID,
+		Name:  user.Name,
 		Phone: user.Phone,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(w.ExpirationHours)).Unix(),
@@ -57,7 +59,7 @@ func (w *JwtWrapper) ValidateToken(signedToken string) (claims *jwtClaims, err e
 	claims, ok := token.Claims.(*jwtClaims)
 
 	if !ok {
-		return nil, errors.New("Couldn't parse claims")
+		return nil, errors.New("couldn't parse claims")
 	}
 
 	if claims.ExpiresAt < time.Now().Local().Unix() {

@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PassengerServiceClient interface {
 	CreatePassenger(ctx context.Context, in *CreatePassengerRequest, opts ...grpc.CallOption) (*CreatePassengerResponse, error)
+	VerifyPassenger(ctx context.Context, in *VerifyPassengerRequest, opts ...grpc.CallOption) (*VerifyPassengerResponse, error)
 }
 
 type passengerServiceClient struct {
@@ -42,11 +43,21 @@ func (c *passengerServiceClient) CreatePassenger(ctx context.Context, in *Create
 	return out, nil
 }
 
+func (c *passengerServiceClient) VerifyPassenger(ctx context.Context, in *VerifyPassengerRequest, opts ...grpc.CallOption) (*VerifyPassengerResponse, error) {
+	out := new(VerifyPassengerResponse)
+	err := c.cc.Invoke(ctx, "/passenger.PassengerService/VerifyPassenger", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PassengerServiceServer is the server API for PassengerService service.
 // All implementations must embed UnimplementedPassengerServiceServer
 // for forward compatibility
 type PassengerServiceServer interface {
 	CreatePassenger(context.Context, *CreatePassengerRequest) (*CreatePassengerResponse, error)
+	VerifyPassenger(context.Context, *VerifyPassengerRequest) (*VerifyPassengerResponse, error)
 	mustEmbedUnimplementedPassengerServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedPassengerServiceServer struct {
 
 func (UnimplementedPassengerServiceServer) CreatePassenger(context.Context, *CreatePassengerRequest) (*CreatePassengerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePassenger not implemented")
+}
+func (UnimplementedPassengerServiceServer) VerifyPassenger(context.Context, *VerifyPassengerRequest) (*VerifyPassengerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyPassenger not implemented")
 }
 func (UnimplementedPassengerServiceServer) mustEmbedUnimplementedPassengerServiceServer() {}
 
@@ -88,6 +102,24 @@ func _PassengerService_CreatePassenger_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PassengerService_VerifyPassenger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyPassengerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PassengerServiceServer).VerifyPassenger(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/passenger.PassengerService/VerifyPassenger",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PassengerServiceServer).VerifyPassenger(ctx, req.(*VerifyPassengerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PassengerService_ServiceDesc is the grpc.ServiceDesc for PassengerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var PassengerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePassenger",
 			Handler:    _PassengerService_CreatePassenger_Handler,
+		},
+		{
+			MethodName: "VerifyPassenger",
+			Handler:    _PassengerService_VerifyPassenger_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

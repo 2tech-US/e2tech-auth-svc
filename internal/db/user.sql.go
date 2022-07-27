@@ -191,3 +191,25 @@ func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) 
 	)
 	return i, err
 }
+
+const verify = `-- name: Verify :one
+UPDATE users
+SET verified = true
+WHERE phone = $1
+RETURNING id, phone, password, name, date_of_birth, verified, created_at
+`
+
+func (q *Queries) Verify(ctx context.Context, phone string) (User, error) {
+	row := q.db.QueryRowContext(ctx, verify, phone)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Phone,
+		&i.Password,
+		&i.Name,
+		&i.DateOfBirth,
+		&i.Verified,
+		&i.CreatedAt,
+	)
+	return i, err
+}

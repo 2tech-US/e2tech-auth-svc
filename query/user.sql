@@ -34,6 +34,12 @@ SET password = $2
 WHERE id = $1
 RETURNING *;
 
+-- name: Verify :one
+UPDATE users
+SET verified = true
+WHERE phone = $1
+RETURNING *;
+
 -- name: DeleteUser :exec
 DELETE FROM users
 WHERE id = $1;
