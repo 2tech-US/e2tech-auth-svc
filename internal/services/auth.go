@@ -44,11 +44,17 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		Name:        req.Name,
 		DateOfBirth: req.DateOfBirth,
 	}
-	_, err = s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
+	rsp, err := s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
 	if err != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusBadGateway,
 			Error:  fmt.Sprintf("passenger service error: %s", err),
+		}, nil
+	}
+	if rsp.Status != http.StatusCreated {
+		return &pb.RegisterResponse{
+			Status: rsp.Status,
+			Error:  rsp.Error,
 		}, nil
 	}
 
