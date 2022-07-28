@@ -15,10 +15,9 @@ type CreatePassengerRequest struct {
 
 func (s *ServiceClient) CreatePassenger(ctx context.Context, req *CreatePassengerRequest) (*pb.CreatePassengerResponse, error) {
 	return s.PassengerClient.CreatePassenger(ctx, &pb.CreatePassengerRequest{
-		Phone:       req.Phone,
-		Password:    req.Password,
-		Name:        req.Name,
-		DateOfBirth: req.DateOfBirth,
+		Phone:    req.Phone,
+		Password: req.Password,
+		Name:     req.Name,
 	})
 
 }

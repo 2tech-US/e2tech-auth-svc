@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/lntvan166/e2tech-auth-svc/internal/db"
 	"github.com/lntvan166/e2tech-auth-svc/internal/passenger"
@@ -27,16 +26,8 @@ type Server struct {
 }
 
 func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	layoutDate := "2006-06-02"
-	reqDateOfBirth, err := time.Parse(layoutDate, req.DateOfBirth)
-	if err != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusBadRequest,
-			Error:  fmt.Sprintf("invalid date of birth: %s", err),
-		}, nil
-	}
 
-	_, err = s.DB.GetUserByPhone(ctx, req.Phone)
+	_, err := s.DB.GetUserByPhone(ctx, req.Phone)
 	if err != sql.ErrNoRows {
 		return &pb.RegisterResponse{
 			Status: http.StatusBadRequest,
@@ -45,10 +36,9 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	}
 
 	passengerSvcReq := &passenger.CreatePassengerRequest{
-		Phone:       req.Phone,
-		Password:    req.Password,
-		Name:        req.Name,
-		DateOfBirth: req.DateOfBirth,
+		Phone:    req.Phone,
+		Password: req.Password,
+		Name:     req.Name,
 	}
 	rsp, err := s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
 	if err != nil {
@@ -65,11 +55,10 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	}
 
 	arg := db.CreateUserParams{
-		Phone:       req.Phone,
-		Password:    utils.HashPassword(req.Password),
-		Name:        req.Name,
-		Role:        req.Role,
-		DateOfBirth: reqDateOfBirth,
+		Phone:    req.Phone,
+		Password: utils.HashPassword(req.Password),
+		Name:     req.Name,
+		Role:     req.Role,
 	}
 
 	_, err = s.DB.CreateUser(ctx, arg)

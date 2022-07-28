@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"time"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -15,20 +14,18 @@ INSERT INTO users (
   phone,
   password,
   name,
-  role,
-  date_of_birth
+  role
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3, $4
 )
 RETURNING id, phone, password, name, role, date_of_birth, verified, created_at
 `
 
 type CreateUserParams struct {
-	Phone       string    `json:"phone"`
-	Password    string    `json:"password"`
-	Name        string    `json:"name"`
-	Role        string    `json:"role"`
-	DateOfBirth time.Time `json:"date_of_birth"`
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+	Name     string `json:"name"`
+	Role     string `json:"role"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -37,7 +34,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Password,
 		arg.Name,
 		arg.Role,
-		arg.DateOfBirth,
 	)
 	var i User
 	err := row.Scan(

@@ -4,7 +4,7 @@ CREATE TABLE "users" (
   "password" varchar NOT NULL,
   "name" varchar NOT NULL,
   "role" varchar NOT NULL,
-  "date_of_birth" date NOT NULL,
+  "date_of_birth" date,
   "verified" boolean NOT NULL DEFAULT false,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );

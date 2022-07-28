@@ -5,16 +5,17 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
 type User struct {
-	ID          int64     `json:"id"`
-	Phone       string    `json:"phone"`
-	Password    string    `json:"password"`
-	Name        string    `json:"name"`
-	Role        string    `json:"role"`
-	DateOfBirth time.Time `json:"date_of_birth"`
-	Verified    bool      `json:"verified"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID          int64        `json:"id"`
+	Phone       string       `json:"phone"`
+	Password    string       `json:"password"`
+	Name        string       `json:"name"`
+	Role        string       `json:"role"`
+	DateOfBirth sql.NullTime `json:"date_of_birth"`
+	Verified    bool         `json:"verified"`
+	CreatedAt   time.Time    `json:"created_at"`
 }
