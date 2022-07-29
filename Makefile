@@ -27,7 +27,7 @@ down:
 	docker rm e2tech
 	
 
-server:
+auth_svc:
 	go run cmd/server/main.go
 
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test proto
