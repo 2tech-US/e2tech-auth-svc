@@ -30,4 +30,7 @@ down:
 auth_svc:
 	go run cmd/server/main.go
 
+update:
+	cd .. && make update
+
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test proto
