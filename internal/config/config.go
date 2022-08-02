@@ -6,6 +6,7 @@ type Config struct {
 	Port            string `mapstructure:"PORT"`
 	DBUrl           string `mapstructure:"DB_URL"`
 	PassengerSvcUrl string `mapstructure:"PASSENGER_SVC_URL"`
+	DriverSvcUrl    string `mapstructure:"DRIVER_SVC_URL"`
 	JWTSecretKey    string `mapstructure:"JWT_SECRET_KEY"`
 }
 

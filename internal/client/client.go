@@ -23,3 +23,18 @@ func InitPassengerServiceClient(c *config.Config) pb.PassengerServiceClient {
 
 	return pb.NewPassengerServiceClient(cc)
 }
+
+type DriverServiceClient struct {
+	Client pb.DriverServiceClient
+}
+
+func InitDriverServiceClient(c *config.Config) pb.DriverServiceClient {
+	// using WithInsecure() because no SSL running
+	cc, err := grpc.Dial(c.DriverSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	if err != nil {
+		fmt.Println("Could not connect:", err)
+	}
+
+	return pb.NewDriverServiceClient(cc)
+}

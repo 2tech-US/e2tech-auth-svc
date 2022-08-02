@@ -114,11 +114,9 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 		}, nil
 	}
 
-	userId := claims.Id
-
 	return &pb.ValidateResponse{
 		Status: http.StatusOK,
-		UserId: userId,
+		Phone:  claims.Phone,
 	}, nil
 }
 
