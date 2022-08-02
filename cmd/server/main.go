@@ -5,9 +5,9 @@ import (
 	"log"
 	"net"
 
+	"github.com/lntvan166/e2tech-auth-svc/internal/client"
 	"github.com/lntvan166/e2tech-auth-svc/internal/config"
 	"github.com/lntvan166/e2tech-auth-svc/internal/db"
-	"github.com/lntvan166/e2tech-auth-svc/internal/passenger"
 	"github.com/lntvan166/e2tech-auth-svc/internal/pb"
 	"github.com/lntvan166/e2tech-auth-svc/internal/services"
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
@@ -37,8 +37,8 @@ func main() {
 
 	fmt.Println("Auth Svc on", c.Port)
 
-	passengerSvc := &passenger.ServiceClient{
-		PassengerClient: passenger.InitServiceClient(&c),
+	passengerSvc := &client.PassengerServiceClient{
+		Client: client.InitPassengerServiceClient(&c),
 	}
 
 	s := services.Server{

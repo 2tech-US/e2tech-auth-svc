@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	client "github.com/lntvan166/e2tech-auth-svc/internal/client"
 	"github.com/lntvan166/e2tech-auth-svc/internal/db"
-	"github.com/lntvan166/e2tech-auth-svc/internal/passenger"
 	"github.com/lntvan166/e2tech-auth-svc/internal/pb"
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
 )
@@ -21,7 +21,7 @@ const (
 type Server struct {
 	DB           *db.Queries
 	Jwt          utils.JwtWrapper
-	PassengerSvc *passenger.ServiceClient
+	PassengerSvc *client.PassengerServiceClient
 	pb.UnimplementedAuthServiceServer
 }
 
@@ -35,7 +35,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		}, nil
 	}
 
-	passengerSvcReq := &passenger.CreatePassengerRequest{
+	passengerSvcReq := &client.CreatePassengerRequest{
 		Phone:    req.Phone,
 		Password: req.Password,
 		Name:     req.Name,

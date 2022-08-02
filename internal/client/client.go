@@ -1,4 +1,4 @@
-package passenger
+package client
 
 import (
 	"fmt"
@@ -9,11 +9,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ServiceClient struct {
-	PassengerClient pb.PassengerServiceClient
+type PassengerServiceClient struct {
+	Client pb.PassengerServiceClient
 }
 
-func InitServiceClient(c *config.Config) pb.PassengerServiceClient {
+func InitPassengerServiceClient(c *config.Config) pb.PassengerServiceClient {
 	// using WithInsecure() because no SSL running
 	cc, err := grpc.Dial(c.PassengerSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
