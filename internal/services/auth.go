@@ -26,7 +26,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	if err != sql.ErrNoRows {
 		return &pb.RegisterResponse{
 			Status: http.StatusBadRequest,
-			Error:  "user already exists",
+			Error:  "auth: user already exists",
 		}, nil
 	}
 
@@ -79,7 +79,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	if err != nil {
 		return &pb.RegisterResponse{
 			Status: http.StatusInternalServerError,
-			Error:  fmt.Sprintf("create user error: %s", err),
+			Error:  fmt.Sprintf("auth: create user error: %s", err),
 		}, nil
 	}
 
@@ -94,12 +94,12 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 		if err == sql.ErrNoRows {
 			return &pb.LoginResponse{
 				Status: http.StatusBadRequest,
-				Error:  "user not found",
+				Error:  "auth: user not found",
 			}, nil
 		}
 		return &pb.LoginResponse{
 			Status: http.StatusInternalServerError,
-			Error:  fmt.Sprintf("get user error: %s", err),
+			Error:  fmt.Sprintf("auth: get user error: %s", err),
 		}, nil
 	}
 
