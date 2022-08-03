@@ -2,10 +2,9 @@
 INSERT INTO users (
   phone,
   password,
-  name,
   role
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 )
 RETURNING *;
 

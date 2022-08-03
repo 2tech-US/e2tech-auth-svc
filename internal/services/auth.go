@@ -32,7 +32,6 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	passengerSvcReq := &client.CreatePassengerRequest{
 		Phone:    req.Phone,
 		Password: req.Password,
-		Name:     req.Name,
 	}
 
 	if req.Role == utils.PASSENGER {
@@ -54,7 +53,6 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	arg := db.CreateUserParams{
 		Phone:    req.Phone,
 		Password: utils.HashPassword(req.Password),
-		Name:     req.Name,
 		Role:     req.Role,
 	}
 
@@ -74,6 +72,12 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, err := s.DB.GetUserByPhone(ctx, req.Phone)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return &pb.LoginResponse{
+				Status: http.StatusBadRequest,
+				Error:  "user not found",
+			}, nil
+		}
 		return &pb.LoginResponse{
 			Status: http.StatusInternalServerError,
 			Error:  fmt.Sprintf("get user error: %s", err),
@@ -84,6 +88,13 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 		return &pb.LoginResponse{
 			Status: http.StatusUnauthorized,
 			Error:  "invalid password",
+		}, nil
+	}
+
+	if user.Role != req.Role {
+		return &pb.LoginResponse{
+			Status: http.StatusUnauthorized,
+			Error:  fmt.Sprintf("you are %s not %s", user.Role, req.Role),
 		}, nil
 	}
 
@@ -114,6 +125,7 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 	return &pb.ValidateResponse{
 		Status: http.StatusOK,
 		Phone:  claims.Phone,
+		Role:   claims.Role,
 	}, nil
 }
 
@@ -127,7 +139,7 @@ func (s *Server) Verify(ctx context.Context, req *pb.VerifyRequest) (*pb.VerifyR
 		}, nil
 	}
 
-	if claims.Name != utils.ADMIN {
+	if claims.Role != utils.ADMIN {
 		return &pb.VerifyResponse{
 			Status: http.StatusUnauthorized,
 			Error:  "only admin can verify",

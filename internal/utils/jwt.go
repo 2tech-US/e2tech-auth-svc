@@ -17,8 +17,8 @@ type JwtWrapper struct {
 type jwtClaims struct {
 	jwt.StandardClaims
 	Id    int64
-	Name  string
 	Phone string
+	Role  string
 }
 
 func (w *JwtWrapper) GenerateToken(user db.User) (signedToken string, err error) {
@@ -28,8 +28,8 @@ func (w *JwtWrapper) GenerateToken(user db.User) (signedToken string, err error)
 	}
 	claims := &jwtClaims{
 		Id:    user.ID,
-		Name:  user.Name,
 		Phone: user.Phone,
+		Role:  user.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiredAt,
 			Issuer:    w.Issuer,
