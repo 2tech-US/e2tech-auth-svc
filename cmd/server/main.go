@@ -40,10 +40,14 @@ func main() {
 	passengerSvc := &client.PassengerServiceClient{
 		Client: client.InitPassengerServiceClient(&c),
 	}
+	driverSvc := &client.DriverServiceClient{
+		Client: client.InitDriverServiceClient(&c),
+	}
 
 	s := services.Server{
 		DB:           DB,
 		PassengerSvc: passengerSvc,
+		DriverSvc:    driverSvc,
 		Jwt:          jwt,
 	}
 
