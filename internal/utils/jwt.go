@@ -22,12 +22,16 @@ type jwtClaims struct {
 }
 
 func (w *JwtWrapper) GenerateToken(user db.User) (signedToken string, err error) {
+	expiredAt := time.Now().Local().Add(time.Hour * time.Duration(w.ExpirationHours)).Unix()
+	if user.Role == ADMIN {
+		expiredAt = time.Now().Local().Add(time.Hour * time.Duration(w.ExpirationHours*24*7)).Unix()
+	}
 	claims := &jwtClaims{
 		Id:    user.ID,
 		Name:  user.Name,
 		Phone: user.Phone,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(w.ExpirationHours)).Unix(),
+			ExpiresAt: expiredAt,
 			Issuer:    w.Issuer,
 		},
 	}

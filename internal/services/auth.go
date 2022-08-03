@@ -12,12 +12,6 @@ import (
 	"github.com/lntvan166/e2tech-auth-svc/internal/utils"
 )
 
-const (
-	ADMIN     = "admin"
-	PASSENGER = "passenger"
-	DRIVER    = "driver"
-)
-
 type Server struct {
 	DB           *db.Queries
 	Jwt          utils.JwtWrapper
@@ -40,18 +34,21 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		Password: req.Password,
 		Name:     req.Name,
 	}
-	rsp, err := s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
-	if err != nil {
-		return &pb.RegisterResponse{
-			Status: http.StatusBadGateway,
-			Error:  fmt.Sprintf("passenger service error: %s", err),
-		}, nil
-	}
-	if rsp.Status != http.StatusCreated {
-		return &pb.RegisterResponse{
-			Status: rsp.Status,
-			Error:  rsp.Error,
-		}, nil
+
+	if req.Role == utils.PASSENGER {
+		rsp, err := s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
+		if err != nil {
+			return &pb.RegisterResponse{
+				Status: http.StatusBadGateway,
+				Error:  fmt.Sprintf("passenger service error: %s", err),
+			}, nil
+		}
+		if rsp.Status != http.StatusCreated {
+			return &pb.RegisterResponse{
+				Status: rsp.Status,
+				Error:  rsp.Error,
+			}, nil
+		}
 	}
 
 	arg := db.CreateUserParams{
@@ -130,7 +127,7 @@ func (s *Server) Verify(ctx context.Context, req *pb.VerifyRequest) (*pb.VerifyR
 		}, nil
 	}
 
-	if claims.Name != ADMIN {
+	if claims.Name != utils.ADMIN {
 		return &pb.VerifyResponse{
 			Status: http.StatusUnauthorized,
 			Error:  "only admin can verify",
