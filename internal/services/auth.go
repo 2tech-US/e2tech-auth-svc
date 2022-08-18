@@ -30,13 +30,11 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 		}, nil
 	}
 
-	passengerSvcReq := &client.CreatePassengerRequest{
-		Phone:    req.Phone,
-		Password: req.Password,
-	}
-
 	if req.Role == utils.PASSENGER {
-		rsp, err := s.PassengerSvc.CreatePassenger(ctx, passengerSvcReq)
+		rsp, err := s.PassengerSvc.CreatePassenger(ctx, &client.CreatePassengerRequest{
+			Phone: req.Phone,
+			Name:  req.Name,
+		})
 		if err != nil {
 			return &pb.RegisterResponse{
 				Status: http.StatusBadGateway,
@@ -53,6 +51,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	if req.Role == utils.DRIVER {
 		rsp, err := s.DriverSvc.CreateDriver(ctx, &client.CreateDriverRequest{
 			Phone: req.Phone,
+			Name:  req.Name,
 		})
 		if err != nil {
 			return &pb.RegisterResponse{
