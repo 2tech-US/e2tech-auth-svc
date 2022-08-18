@@ -52,8 +52,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	}
 	if req.Role == utils.DRIVER {
 		rsp, err := s.DriverSvc.CreateDriver(ctx, &client.CreateDriverRequest{
-			Phone:    req.Phone,
-			Password: req.Password,
+			Phone: req.Phone,
 		})
 		if err != nil {
 			return &pb.RegisterResponse{
@@ -164,10 +163,6 @@ func (s *Server) Verify(ctx context.Context, req *pb.VerifyRequest) (*pb.VerifyR
 			Error:  "only admin can verify",
 		}, nil
 	}
-
-	s.PassengerSvc.VerifyPassenger(ctx, &pb.VerifyPassengerRequest{
-		Phone: req.Phone,
-	})
 
 	phone := req.Phone
 	user, err := s.DB.GetUserByPhone(ctx, phone)
