@@ -115,6 +115,17 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 		}, nil
 	}
 
+	_, err = s.DB.UpdateDeviceToken(ctx, db.UpdateDeviceTokenParams{
+		Phone:       req.Phone,
+		DeviceToken: utils.NullString(req.DeviceToken),
+	})
+	if err != nil {
+		return &pb.LoginResponse{
+			Status: http.StatusInternalServerError,
+			Error:  fmt.Sprintf("auth: update device token error: %s", err),
+		}, nil
+	}
+
 	token, err := s.Jwt.GenerateToken(user)
 	if err != nil {
 		return &pb.LoginResponse{

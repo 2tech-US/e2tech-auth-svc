@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -17,7 +18,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3
 )
-RETURNING id, phone, password, role, verified, created_at
+RETURNING id, phone, password, role, device_token, verified, created_at
 `
 
 type CreateUserParams struct {
@@ -34,6 +35,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)
@@ -51,7 +53,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, phone, password, role, verified, created_at FROM users
+SELECT id, phone, password, role, device_token, verified, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -63,6 +65,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)
@@ -70,7 +73,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserByPhone = `-- name: GetUserByPhone :one
-SELECT id, phone, password, role, verified, created_at FROM users
+SELECT id, phone, password, role, device_token, verified, created_at FROM users
 WHERE phone = $1 LIMIT 1
 `
 
@@ -82,6 +85,7 @@ func (q *Queries) GetUserByPhone(ctx context.Context, phone string) (User, error
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)
@@ -89,7 +93,7 @@ func (q *Queries) GetUserByPhone(ctx context.Context, phone string) (User, error
 }
 
 const getUserForUpdate = `-- name: GetUserForUpdate :one
-SELECT id, phone, password, role, verified, created_at FROM users
+SELECT id, phone, password, role, device_token, verified, created_at FROM users
 WHERE id = $1 LIMIT 1
 FOR NO KEY UPDATE
 `
@@ -102,6 +106,7 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id int64) (User, error) 
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)
@@ -109,7 +114,7 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id int64) (User, error) 
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, phone, password, role, verified, created_at FROM users
+SELECT id, phone, password, role, device_token, verified, created_at FROM users
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -134,6 +139,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.Phone,
 			&i.Password,
 			&i.Role,
+			&i.DeviceToken,
 			&i.Verified,
 			&i.CreatedAt,
 		); err != nil {
@@ -150,28 +156,56 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 	return items, nil
 }
 
-const updatePassword = `-- name: UpdatePassword :one
-
+const updateDeviceToken = `-- name: UpdateDeviceToken :one
 UPDATE users
-SET password = $2
-WHERE id = $1
-RETURNING id, phone, password, role, verified, created_at
+SET device_token = $2
+WHERE phone = $1
+RETURNING id, phone, password, role, device_token, verified, created_at
 `
 
-type UpdatePasswordParams struct {
-	ID       int64  `json:"id"`
-	Password string `json:"password"`
+type UpdateDeviceTokenParams struct {
+	Phone       string         `json:"phone"`
+	DeviceToken sql.NullString `json:"device_token"`
 }
 
-// pagination: offset: skip many rows
-func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updatePassword, arg.ID, arg.Password)
+func (q *Queries) UpdateDeviceToken(ctx context.Context, arg UpdateDeviceTokenParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateDeviceToken, arg.Phone, arg.DeviceToken)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
+		&i.Verified,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updatePassword = `-- name: UpdatePassword :one
+
+UPDATE users
+SET password = $2
+WHERE phone = $1
+RETURNING id, phone, password, role, device_token, verified, created_at
+`
+
+type UpdatePasswordParams struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
+// pagination: offset: skip many rows
+func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updatePassword, arg.Phone, arg.Password)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Phone,
+		&i.Password,
+		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)
@@ -182,7 +216,7 @@ const verify = `-- name: Verify :one
 UPDATE users
 SET verified = true
 WHERE phone = $1
-RETURNING id, phone, password, role, verified, created_at
+RETURNING id, phone, password, role, device_token, verified, created_at
 `
 
 func (q *Queries) Verify(ctx context.Context, phone string) (User, error) {
@@ -193,6 +227,7 @@ func (q *Queries) Verify(ctx context.Context, phone string) (User, error) {
 		&i.Phone,
 		&i.Password,
 		&i.Role,
+		&i.DeviceToken,
 		&i.Verified,
 		&i.CreatedAt,
 	)

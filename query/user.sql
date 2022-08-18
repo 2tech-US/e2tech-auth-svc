@@ -30,7 +30,13 @@ OFFSET $2; -- pagination: offset: skip many rows
 -- name: UpdatePassword :one
 UPDATE users
 SET password = $2
-WHERE id = $1
+WHERE phone = $1
+RETURNING *;
+
+-- name: UpdateDeviceToken :one
+UPDATE users
+SET device_token = $2
+WHERE phone = $1
 RETURNING *;
 
 -- name: Verify :one
