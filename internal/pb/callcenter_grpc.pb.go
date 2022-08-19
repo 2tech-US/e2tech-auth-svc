@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.3
-// source: internal/callcenter/pb/callcenter.proto
+// source: internal/pb/callcenter.proto
 
 package pb
 
@@ -211,5 +211,5 @@ var CallCenterService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/callcenter/pb/callcenter.proto",
+	Metadata: "internal/pb/callcenter.proto",
 }

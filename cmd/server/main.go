@@ -43,12 +43,16 @@ func main() {
 	driverSvc := &client.DriverServiceClient{
 		Client: client.InitDriverServiceClient(&c),
 	}
+	callcenterSvc := &client.CallCenterServiceClient{
+		Client: client.InitServiceClient(&c),
+	}
 
 	s := services.Server{
-		DB:           DB,
-		PassengerSvc: passengerSvc,
-		DriverSvc:    driverSvc,
-		Jwt:          jwt,
+		DB:            DB,
+		PassengerSvc:  passengerSvc,
+		DriverSvc:     driverSvc,
+		CallCenterSvc: callcenterSvc,
+		Jwt:           jwt,
 	}
 
 	grpcServer := grpc.NewServer()

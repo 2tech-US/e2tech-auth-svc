@@ -5,6 +5,7 @@ package tech2.microservice;
 option java_multiple_files = true;
 option go_package = "./internal/pb";
 
+
 message CallCenterEmployee {
   string phone = 1;
   string name = 2;
