@@ -38,3 +38,18 @@ func InitDriverServiceClient(c *config.Config) pb.DriverServiceClient {
 
 	return pb.NewDriverServiceClient(cc)
 }
+
+type CallCenterServiceClient struct {
+	Client pb.CallCenterServiceClient
+}
+
+func InitServiceClient(c *config.Config) pb.CallCenterServiceClient {
+	// using WithInsecure() because no SSL running
+	cc, err := grpc.Dial(c.CallCenterSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	if err != nil {
+		fmt.Println("Could not connect:", err)
+	}
+
+	return pb.NewCallCenterServiceClient(cc)
+}

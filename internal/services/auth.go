@@ -13,10 +13,11 @@ import (
 )
 
 type Server struct {
-	DB           *db.Queries
-	Jwt          utils.JwtWrapper
-	PassengerSvc *client.PassengerServiceClient
-	DriverSvc    *client.DriverServiceClient
+	DB            *db.Queries
+	Jwt           utils.JwtWrapper
+	PassengerSvc  *client.PassengerServiceClient
+	DriverSvc     *client.DriverServiceClient
+	CallCenterSvc *client.CallCenterServiceClient
 	pb.UnimplementedAuthServiceServer
 }
 
@@ -57,6 +58,25 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 			return &pb.RegisterResponse{
 				Status: http.StatusBadGateway,
 				Error:  fmt.Sprintf("driver service error: %s", err),
+			}, nil
+		}
+		if rsp.Status != http.StatusCreated {
+			return &pb.RegisterResponse{
+				Status: rsp.Status,
+				Error:  rsp.Error,
+			}, nil
+		}
+	}
+
+	if req.Role == utils.CALLCENTER_CREATOR || req.Role == utils.CALLCENTER_LOCATOR || req.Role == utils.CALLCENTER_MANAGER {
+		rsp, err := s.CallCenterSvc.CreateEmployee(ctx, &client.CreateEmployeeRequest{
+			Phone: req.Phone,
+			Role:  req.Role,
+		})
+		if err != nil {
+			return &pb.RegisterResponse{
+				Status: http.StatusBadGateway,
+				Error:  fmt.Sprintf("Callcenter service error: %s", err),
 			}, nil
 		}
 		if rsp.Status != http.StatusCreated {
