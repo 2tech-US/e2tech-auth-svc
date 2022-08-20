@@ -223,3 +223,19 @@ func (s *Server) Verify(ctx context.Context, req *pb.VerifyRequest) (*pb.VerifyR
 		Status: http.StatusOK,
 	}, nil
 }
+
+func (s *Server) GetDeviceToken(ctx context.Context, req *pb.GetDeviceTokenRequest) (*pb.GetDeviceTokenResponse, error) {
+	phone := req.Phone
+	user, err := s.DB.GetUserByPhone(ctx, phone)
+	if err != nil {
+		return &pb.GetDeviceTokenResponse{
+			Status: http.StatusInternalServerError,
+			Error:  fmt.Sprintf("user not found: %s", err),
+		}, nil
+	}
+
+	return &pb.GetDeviceTokenResponse{
+		Status: http.StatusOK,
+		Token:  user.DeviceToken.String,
+	}, nil
+}
