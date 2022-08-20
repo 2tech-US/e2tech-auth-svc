@@ -44,7 +44,7 @@ func main() {
 		Client: client.InitDriverServiceClient(&c),
 	}
 	callcenterSvc := &client.CallCenterServiceClient{
-		Client: client.InitServiceClient(&c),
+		Client: client.InitCallCenterServiceClient(&c),
 	}
 
 	s := services.Server{
