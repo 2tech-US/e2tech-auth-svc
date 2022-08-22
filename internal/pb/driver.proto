@@ -21,7 +21,12 @@ message Driver {
   int64 id = 1;
   string phone = 2;
   string name = 3;
-  string date_of_birth = 5;
+  string date_of_birth = 4;
+  string avatar_url = 5;
+  string status = 6;
+  double latitude = 7;
+  double longitude = 8;
+  string created_at = 9;
 }
 
 message CreateDriverRequest {
@@ -52,7 +57,7 @@ message GetDriverNearbyRequest {
 }
 
 message DriverNearby {
-  int64 driver_id = 1;
+  string phone = 1;
   double distance = 2;
   double latitude = 3;
   double longitude = 4;
@@ -90,10 +95,9 @@ message ListDriversResponse {
 }
 
 message UpdateDriverRequest {
-  int64 id = 1;
-  string phone = 2;
-  string name = 3;
-  string date_of_birth = 4;
+  string phone = 1;
+  string name = 2;
+  string date_of_birth = 3;
 }
 
 message UpdateDriverResponse {
