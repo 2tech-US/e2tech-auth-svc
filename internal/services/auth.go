@@ -128,12 +128,12 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 		}, nil
 	}
 
-	if user.Role != req.Role {
-		return &pb.LoginResponse{
-			Status: http.StatusUnauthorized,
-			Error:  fmt.Sprintf("you are %s not %s", user.Role, req.Role),
-		}, nil
-	}
+	// if user.Role != req.Role {
+	// 	return &pb.LoginResponse{
+	// 		Status: http.StatusUnauthorized,
+	// 		Error:  fmt.Sprintf("you are %s not %s", user.Role, req.Role),
+	// 	}, nil
+	// }
 
 	_, err = s.DB.UpdateDeviceToken(ctx, db.UpdateDeviceTokenParams{
 		Phone:       req.Phone,
